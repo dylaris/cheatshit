@@ -319,7 +319,7 @@ class Foo {
   // setter
   name=(value) { _name = value }
   // 静态setter
-  name=(value) { __name = value }
+  static name=(value) { __name = value }
   // 普通方法
   method(param1, param2) { ... }
   // 静态方法
