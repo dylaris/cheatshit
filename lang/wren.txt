@@ -1,0 +1,303 @@
+##################################################
+# 标题: Wren Cheatsheet
+# 作者: dylaris
+# 日期: 2026-5-8
+# 目录:
+#      1.  参考
+#      2.  你好世界
+#      3.  基础类型
+#      4.  复合类型
+#      5.  赋值/运算
+#      6.  流程控制
+#      7.  数组/列表
+#      8.  哈希表/字典
+#      9.  字符串
+#      10. 函数
+#      11. 终端IO
+#      12. 错误处理
+##################################################
+
+##################################################
+# 参考
+##################################################
+https://wren.io/                  # 官网
+
+
+##################################################
+# 你好世界
+##################################################
+<<<
+// 单行注释
+/* 多行
+   注释 */
+System.print("hello, world")
+>>>
+
+##################################################
+# 运算符
+##################################################
++ - * / %                         # 算数运算符
+<< >> & | ^ && || ~ !             # 逻辑运算符
+== != < <= > >=                   # 比较运算符
+?:                                # 三元条件运算符
+..                                # 区间运算符[]
+...                               # 区间运算符[)
+is                                # 类型判断运算符
+
+##################################################
+# 基础类型
+##################################################
+Bool                              # 布尔
+Fiber                             # 协程
+Fn                                # 函数
+List                              # 列表
+Map                               # 映射
+Null                              # 空类型
+Num                               # 数值
+String                            # 字符串
+
+<<<
+var a = true
+var b = false
+
+var a = Fiber.new { 语句 }
+var b = Fiber.new {|参数| 语句 }
+
+var a = Fn.new { 语句 }
+var b = Fn.new {|参数| 语句 }
+
+var a = []
+var b = [1, 2, 3, 4]
+
+var a = {}
+var b = { "k1": "v1", "k2": "v2" }
+
+var a = null
+
+var a = 1
+var b = 1.3
+var c = 3.14e+2   // 3.14x100
+var d = 3.14e-2   // 3.14/100
+var e = 0x1234
+
+var a = "hello"
+var b = """hello\nworld""" // 原始字符串，不会转义
+var c = "\x48"             // 0x48 (1)
+var d = "\u0041"           // 0x0041 (2)
+var e = "\U0001F64A"       // 0x0001f64a (4)
+>>>
+
+
+##################################################
+# 复合类型
+##################################################
+Class                             # 类
+
+<<<
+class Foo {
+  // 支持重载
+  construct new() { ...... }
+  // 成员属性默认私有，必须以_开头
+  // 静态成员属性必须以__开头
+  construct new(param1, param2) {
+    _m1 = param1
+    _m2 = param2
+    __m3 = 10
+  }
+
+  // getter
+  name { _name }
+  // 静态getter
+  static name { __name }
+  // setter
+  name=(value) { _name = value }
+  // 静态setter
+  static name=(value) { __name = value }
+  // 普通方法
+  method(param1, param2) { ... }
+  // 静态方法
+  static method1(param1, param2) { ... }
+}
+var a = Foo.new(参数)
+>>>
+
+
+##################################################
+# 流程控制
+##################################################
+<<<分支判断
+if (n < 50) {
+  ......
+} else if (n < 70) {
+  ......
+} else {
+  ......
+}
+>>>
+
+<<<循环结构
+while (n < 100) {
+  ......
+}
+
+for (i in 1..100) {
+  ......
+}
+
+for (i in ["a", "c", "d"]) {
+  ......
+}
+>>>
+
+break          # 跳出循环
+continue       # 跳过本次循环
+return [VALUE] # 跳出函数, 可带返回值
+
+
+##################################################
+# 数组/列表
+##################################################
+<<<增
+list.add(10)
+list.insert(0, "head")
+list = list + ["a", "b"]
+>>>
+
+<<<删
+list.remove("true")
+list.removeAt(2)
+list.clear()
+>>>
+
+<<<查
+var length = list.count
+var slice = list[1..-1]
+>>>
+
+<<<改
+list[0] = "first"
+>>>
+
+<<<遍历
+for (i in list) {
+  ......
+}
+>>>
+
+##################################################
+# 哈希表/字典
+##################################################
+<<<增
+map["k"] = "v"
+>>>
+
+<<<删
+map.remove("k")
+map.clear()
+>>>
+
+<<<查
+var value = map["k"]
+var exist = map.containsKey("k")
+var length = map.count
+>>>
+
+<<<改
+map["k"] = "v"
+>>>
+
+<<<遍历
+for (bird in birds) {
+  var key = bird.key
+  var val = bird.value
+  ......
+}
+
+for (state in birds.keys) {
+  var value = birds[state]
+  ......
+}
+>>>
+
+
+##################################################
+# 字符串
+##################################################
+<<<增
+var new_s = s + "hello"
+var new_s = s * 10
+var new_s = String.fromByte(100)
+>>>
+
+<<<删
+var new_s = s.replace(" ", "") // 删掉所有空格
+>>>
+
+<<<查
+var ch = s[2]
+var index = s.indexOf("a")
+var index = s.indexOf("a", 2) // 从索引2开始查找
+var exist = s.contains("abc")
+var length = s.count
+var substring = s[1..-1]
+var byte = s.bytes[1]
+var nwe_s = s.trim()
+var nwe_s = s.trimStart()
+var nwe_s = s.trimEnd()
+var check = (s == new_s)
+var check = s.endsWith("suffix")
+var check = s.startsWith("prefix")
+>>>
+
+<<<改
+var new_s = s.replace("a", "b") // 将所有a替换成b
+var list = s.split(" ")         // 按照空格分割
+>>>
+
+<<<遍历
+for (ch in string) {
+  ......
+}
+>>>
+
+<<<字符串插值
+var msg = "world"
+System.print("hello, %(msg)")
+>>>
+
+
+##################################################
+# 函数
+##################################################
+<<<
+var f = Fn.new { return "hello" }
+f.call()
+
+var f1 = Fn.new {|param| return param}
+f1.call("h")
+
+var f2 = Fn.new {|param1, param2| return param1 + param2}
+f2.call("a", "b")
+>>>
+
+
+##################################################
+# 终端IO
+##################################################
+<<<终端输出
+System.print("hello, world") // 带有换行
+System.write("hello, world") // 不带有换行
+>>>
+
+
+##################################################
+# 错误处理
+##################################################
+<<<
+Fiber.abort("bad thing") // 终止
+
+var f = Fiber.new { ...... }
+f.try() // 捕获异常
+System.print(f.error)
+>>>
+
