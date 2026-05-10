@@ -9,3 +9,15 @@ Lazy dev cheatsheet collection
 ## editor
 
 - emacs
+
+## tool
+
+- bash
+
+- powershell
+
+## lib
+
+- tkinter
+
+## framework

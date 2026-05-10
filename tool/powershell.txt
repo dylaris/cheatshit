@@ -1,0 +1,178 @@
+##################################################
+# 标题: Powershell Cheatsheet
+# 作者: dylaris
+# 日期: 2026-5-10
+# 目录:
+#      1.  帮助
+#      2.  基础导航
+#      3.  文件/目录查看
+#      4.  文件/目录操作
+#      5.  文件内容查看
+#      6.  搜索与查找
+#      7.  系统信息
+#      8.  进程管理
+#      9.  网络管理
+#      10.  权限管理
+#      11. 压缩/解压
+#      12. 编码相关
+#      13. 实用管道操作
+#      14. 常用别名
+##################################################
+
+##################################################
+# 帮助
+##################################################
+Get-Help                    # 查看命令帮助
+                            # -Examples 查看示例
+                            # -Detailed 详细帮助
+                            # -Full     完整帮助
+                            # -Online   在线打开文档
+Update-Help                 # 更新本地帮助文档
+                            # -Force    强制更新
+Get-Command                 # 查找命令
+Get-Module                  # 查看模块
+                            # -ListAvailable 列出所有可用模块
+
+
+##################################################
+# 基础导航
+##################################################
+Get-Location                # 查看当前目录
+Set-Location                # 进入目录
+Push-Location               # 保存目录并切换
+Pop-Location                # 返回上一个目录
+
+
+##################################################
+# 文件/目录查看
+##################################################
+Get-ChildItem               # 列出目录文件
+                            # -Force         显示隐藏文件
+                            # -Recurse       递归列出子目录
+                            # -Filter *.txt  按扩展名过滤
+                            # -Name          仅显示名称
+
+
+##################################################
+# 文件/目录操作
+##################################################
+New-Item                    # 创建文件
+                            # -ItemType Directory  创建目录
+                            # -ItemType File       创建文件
+Copy-Item                   # 复制文件/目录
+Move-Item                   # 移动文件/目录
+Remove-Item                 # 删除文件
+                            # -Recurse       递归删除（目录）
+                            # -Force         强制删除
+Rename-Item                 # 重命名
+
+
+##################################################
+# 文件内容查看
+##################################################
+Get-Content                 # 查看文件全部内容
+                            # -Encoding UTF8        指定编码方式
+                            # -Tail 10              查看末尾10行
+                            # -TotalCount 10        查看开头10行
+                            # -Wait                 实时跟踪文件变化
+
+
+##################################################
+# 搜索与查找
+##################################################
+Select-String               # 在文件内容中搜索指定模式
+                            # -Pattern "关键词"      搜索内容
+                            # -Path *.txt           指定路径
+                            # -Recurse              递归搜索
+                            # -CaseSensitive        区分大小写
+                            # 示例: Select-String -Path "*.log" -Pattern "ERROR" -Recurse
+
+
+##################################################
+# 系统信息
+##################################################
+$env:USERNAME               # 查看当前用户名
+whoami                      # 查看当前用户（域名\用户名）
+hostname                    # 查看主机名
+Get-ComputerInfo            # 查看详细系统信息
+Get-PSDrive                 # 查看所有磁盘及使用情况
+Get-Date                    # 查看当前日期时间
+Get-Culture                 # 查看系统区域语言
+Get-UICulture               # 查看UI区域语言
+
+
+##################################################
+# 进程管理
+##################################################
+Get-Process                 # 查看当前进程列表
+                            # -Name "notepad"        按名称过滤
+Stop-Process                # 结束指定进程
+                            # -Force                 强制结束进程
+Start-Process               # 启动新进程
+                            # -Verb RunAs            以管理员身份运行
+                            # -FilePath "程序路径"
+
+
+##################################################
+# 网络管理
+##################################################
+ping                        # 测试网络连通性
+Test-Connection             # PowerShell 版 ping
+Test-NetConnection          # 测试端口连通性
+                            # -Port 80               指定端口
+Get-NetIPAddress            # 查看本机 IP 地址
+Get-NetTCPConnection        # 查看当前 TCP 端口占用
+
+
+##################################################
+# 压缩/解压
+##################################################
+Compress-Archive            # 压缩为 .zip 文件
+                            # -Path 源路径
+                            # -DestinationPath 目标路径
+                            # -CompressionLevel 压缩级别
+Expand-Archive              # 解压 .zip 文件
+                            # -Path zip路径
+                            # -DestinationPath 解压目标路径
+
+
+##################################################
+# 编码相关
+##################################################
+[Console]::OutputEncoding   # 查看控制台输出编码
+[Console]::InputEncoding    # 查看控制台输入编码
+$OutputEncoding             # 查看 PowerShell 输出编码
+chcp                        # 查看/修改活动代码页
+                            # 示例: chcp 65001  切换到 UTF-8
+
+
+##################################################
+# 实用管道操作
+##################################################
+| ForEach-Object {}         # 遍历处理每个对象
+| Select-Object -First 10   # 取前 10 条
+| Select-Object -Last 10    # 取后 10 条
+| Sort-Object               # 排序
+| Group-Object              # 分组统计
+| Export-Csv                # 导出为 CSV 文件
+| Out-File                  # 输出到文件
+| Clip                      # 复制到剪贴板
+
+
+##################################################
+# 常用别名
+##################################################
+Get-Help                    # help, man
+Get-ChildItem               # dir, ls
+Set-Location                # cd, chdir
+Push-Location               # pushd
+Pop-Location                # popd
+Get-Content                 # cat, type
+Copy-Item                   # cp, copy
+Move-Item                   # mv, move
+Remove-Item                 # rm, del, rmdir
+Rename-Item                 # ren
+Get-Process                 # ps
+Stop-Process                # kill
+Where-Object                # where
+ForEach-Object              # %
