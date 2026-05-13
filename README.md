@@ -5,6 +5,7 @@ Lazy dev cheatsheet collection
 ## lang
 
 - wren
+- javascript
 
 ## editor
 

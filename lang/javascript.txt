@@ -1,0 +1,540 @@
+##################################################
+# 标题: JavaScript Cheatsheet
+# 作者: dylaris
+# 日期: 2026-5-13
+# 目录:
+#      1.  参考
+#      2.  你好世界
+#      3.  基础类型
+#      4.  复合类型
+#      5.  赋值/运算
+#      6.  流程控制
+#      7.  数组/列表
+#      8.  对象/字典
+#      9.  字符串
+#      10. 函数
+#      11. 终端IO
+#      12. 错误处理
+##################################################
+
+##################################################
+# 参考
+##################################################
+https://developer.mozilla.org/zh-CN/docs/Web/JavaScript  # MDN文档
+https://javascript.info/                                 # 现代JavaScript教程
+
+##################################################
+# 你好世界
+##################################################
+<<<
+// 单行注释
+/* 多行
+   注释 */
+
+console.log("hello, world");
+alert("hello, world")
+>>>
+
+##################################################
+# 运算符
+##################################################
++ - * / %                         # 算术运算符
+**                                # 幂运算
+++ --                             # 自增自减
+<< >> >>> & | ^ ~                 # 位运算符
+&& || !                           # 逻辑运算符
+== != === !== < <= > >=           # 比较运算符
+??                                # 空值合并运算符
+?.                                # 可选链运算符
+...                               # 展开/剩余运算符
+= += -= *= /= %= **=              # 赋值运算符
+? :                               # 三元条件运算符
+typeof                            # 类型判断运算符
+instanceof                        # 实例判断运算符
+
+##################################################
+# 基础类型
+##################################################
+Number                            # 数值
+String                            # 字符串
+Boolean                           # 布尔
+Null                              # 空类型
+Undefined                         # 未定义
+Symbol                            # 符号
+BigInt                            # 大整数
+Object                            # 对象
+
+<<<
+let a = true;
+let b = false;
+
+let a = 42;
+let b = 3.14;
+let c = 1.23e+5;
+let d = 0x1A3F;
+let e = 0b1010;
+let f = 0o755;
+let g = 9007199254740991n; // BigInt
+
+let a = "hello";
+let b = 'world';
+let c = `hello\nworld`;
+let d = "\x48";             // 0x48 (H)
+let e = "\u0041";           // U+0041 (A)
+let f = "\u{1F64A}";        // 表情符号
+
+let a = undefined;
+let a = null;
+
+let a = Symbol("description");
+
+let a = 42n;
+>>>
+
+
+##################################################
+# 复合类型
+##################################################
+class                             # 类
+Object                            # 对象
+
+<<<
+// 类定义
+class Foo {
+  // 静态属性
+  static staticProp = 10;
+
+  // 私有字段（必须以#开头）
+  #privateField;
+
+  // 构造函数
+  constructor(param1, param2) {
+    this.publicProp = param1;    // 公有属性
+    this.#privateField = param2; // 私有属性
+  }
+
+  // getter
+  get name() {
+    return this._name;
+  }
+
+  // setter
+  set name(value) {
+    this._name = value;
+  }
+
+  // 静态getter
+  static get version() {
+    return "1.0.0";
+  }
+
+  // 实例方法
+  method(param1, param2) {
+    return param1 + param2;
+  }
+
+  // 静态方法
+  static staticMethod(param) {
+    return param;
+  }
+
+  // 私有方法
+  #privateMethod() {
+    return "private";
+  }
+}
+
+// 对象字面量
+const obj = {
+  prop: "value",
+  method() {
+    return this.prop;
+  },
+  get computed() {
+    return this.prop;
+  }
+};
+
+let a = new Foo(param1, param2);
+>>>
+
+
+##################################################
+# 流程控制
+##################################################
+<<<分支判断
+if (n < 50) {
+  // ...
+} else if (n < 70) {
+  // ...
+} else {
+  // ...
+}
+
+// switch语句
+switch(expression) {
+  case value1:
+    // ...
+    break;
+  case value2:
+    // ...
+    break;
+  default:
+    // ...
+}
+>>>
+
+<<<循环结构
+while (n < 100) {
+  // ...
+  n++;
+}
+
+do {
+  // ...
+  n++;
+} while (n < 100);
+
+for (let i = 0; i < 100; i++) {
+  // ...
+}
+
+for (let i = 1; i <= 100; i++) {
+  // ...
+}
+
+for (let item of array) {
+  // ...
+}
+
+for (let key in object) {
+  // ...
+}
+
+array.forEach((item, index) => {
+  // ...
+});
+>>>
+
+break;            # 跳出循环
+continue;         # 跳过本次循环
+return VALUE;     # 跳出函数，可带返回值
+throw error;      # 抛出异常
+
+
+##################################################
+# 数组/列表
+##################################################
+<<<创建
+const arr = [];
+const arr = [1, 2, 3, 4];
+const arr = new Array(5);        // 长度为5的空数组
+const arr = Array.from("hello"); // ['h','e','l','l','o']
+const arr = [...iterable];       // 展开运算符
+>>>
+
+<<<增
+arr.push(10);                    // 末尾添加
+arr.unshift("head");             // 开头添加
+arr.splice(2, 0, "insert");      // 指定位置插入
+arr = arr.concat(["a", "b"]);    // 合并数组
+>>>
+
+<<<删
+arr.pop();                       // 删除末尾
+arr.shift();                     // 删除开头
+arr.splice(2, 1);                // 删除索引2开始的1个元素
+delete arr[2];                   // 删除但保留空位
+arr.length = 0;                  // 清空数组
+arr = [];                        // 清空数组
+>>>
+
+<<<查
+let length = arr.length;
+let element = arr[2];
+let index = arr.indexOf("value");
+let lastIndex = arr.lastIndexOf("value");
+let found = arr.find(x => x > 10);
+let includes = arr.includes("value");
+let slice = arr.slice(1, -1);
+>>>
+
+<<<改
+arr[0] = "first";
+arr.fill(0, 2, 4);               // 填充索引2-4为0
+arr.reverse();                   // 反转
+arr.sort();                      // 排序
+arr.sort((a,b) => a - b);        // 数字升序
+>>>
+
+<<<遍历
+for (let i of arr) {
+  // ...
+}
+
+arr.forEach((item, index) => {
+  // ...
+});
+
+for (let i = 0; i < arr.length; i++) {
+  // ...
+}
+>>>
+
+<<<高阶函数
+let doubled = arr.map(x => x * 2);
+let evens = arr.filter(x => x % 2 === 0);
+let sum = arr.reduce((acc, x) => acc + x, 0);
+let allPositive = arr.every(x => x > 0);
+let somePositive = arr.some(x => x > 0);
+>>>
+
+
+##################################################
+# 对象/字典
+##################################################
+<<<创建
+const obj = {};
+const obj = { key: "value" };
+const obj = new Object();
+const obj = Object.create(proto);
+>>>
+
+<<<增
+obj.key = "value";
+obj["key"] = "value";
+Object.assign(obj, { a: 1, b: 2 });
+>>>
+
+<<<删
+delete obj.key;
+>>>
+
+<<<查
+let value = obj.key;
+let value = obj["key"];
+let exists = "key" in obj;
+let exists = obj.hasOwnProperty("key");
+let length = Object.keys(obj).length;
+>>>
+
+<<<改
+obj.key = "new value";
+>>>
+
+<<<遍历
+for (let key in obj) {
+  if (obj.hasOwnProperty(key)) {
+    let value = obj[key];
+  }
+}
+
+Object.keys(obj).forEach(key => {
+  let value = obj[key];
+});
+
+Object.entries(obj).forEach(([key, value]) => {
+  // ...
+});
+
+Object.values(obj).forEach(value => {
+  // ...
+});
+>>>
+
+<<<解构
+const { prop1, prop2 } = obj;
+const { prop1: alias } = obj;
+const { prop1 = defaultValue } = obj;
+>>>
+
+
+##################################################
+# 字符串
+##################################################
+<<<创建
+const str = "hello";
+const str = 'world';
+const str = `template ${variable}`;
+const str = String(123);
+>>>
+
+<<<增
+let newStr = str + "hello";
+let newStr = str.repeat(3);
+let newStr = str.concat(" world");
+let newStr = `prefix ${str} suffix`;
+>>>
+
+<<<删
+let newStr = str.replace(" ", "");     // 删掉第一个空格
+let newStr = str.replaceAll(" ", "");  // 删掉所有空格
+let newStr = str.trim();               // 删除两端空白
+let newStr = str.trimStart();          // 删除开头空白
+let newStr = str.trimEnd();            // 删除结尾空白
+>>>
+
+<<<查
+let char = str[2];
+let char = str.charAt(2);
+let code = str.charCodeAt(2);
+let index = str.indexOf("a");
+let lastIndex = str.lastIndexOf("a");
+let includes = str.includes("abc");
+let startsWith = str.startsWith("prefix");
+let endsWith = str.endsWith("suffix");
+let length = str.length;
+let substr = str.slice(1, -1);
+let substr = str.substring(1, 4);
+let substr = str.substr(1, 3);         // 已废弃
+>>>
+
+<<<改
+let upper = str.toUpperCase();
+let lower = str.toLowerCase();
+let replaced = str.replace("a", "b");
+let replacedAll = str.replaceAll(/a/g, "b");
+let list = str.split(" ");
+let padded = str.padStart(10, "0");
+let padded = str.padEnd(10, " ");
+>>>
+
+<<<遍历
+for (let ch of str) {
+  // ...
+}
+
+for (let i = 0; i < str.length; i++) {
+  let ch = str[i];
+}
+>>>
+
+<<<模板字符串
+const name = "world";
+console.log(`hello, ${name}`);
+console.log(`multi
+line
+string`);
+>>>
+
+
+##################################################
+# 函数
+##################################################
+<<<函数声明
+function add(a, b) {
+  return a + b;
+}
+
+// 函数表达式
+const add = function(a, b) {
+  return a + b;
+};
+
+// 箭头函数
+const add = (a, b) => a + b;
+const greet = name => `hello ${name}`;
+const getObj = () => ({ key: "value" });
+
+// 默认参数
+function greet(name = "world") {
+  return `hello ${name}`;
+}
+
+// 剩余参数
+function sum(...numbers) {
+  return numbers.reduce((a, b) => a + b, 0);
+}
+
+// 立即执行函数（IIFE）
+(function() {
+  // ...
+})();
+
+(() => {
+  // ...
+})();
+>>>
+
+<<<调用
+add(2, 3);
+>>>
+
+<<<高阶函数
+function operate(a, b, fn) {
+  return fn(a, b);
+}
+
+// 闭包
+function counter() {
+  let count = 0;
+  return () => ++count;
+}
+>>>
+
+
+##################################################
+# 终端IO
+##################################################
+<<<Node.js环境
+console.log("hello, world");     // 带换行
+console.error("error message");  // 错误输出
+console.warn("warning");         // 警告输出
+console.info("info");            // 信息输出
+console.debug("debug");          // 调试输出
+
+console.table(obj);              // 表格形式
+console.time("label");           // 计时开始
+console.timeEnd("label");        // 计时结束
+console.trace();                 // 打印堆栈跟踪
+>>>
+
+<<<浏览器环境
+console.log("hello, world");
+alert("hello, world");           // 弹窗
+prompt("输入：");                 // 输入弹窗
+confirm("确认？");               // 确认弹窗
+document.write("hello");         // 写入页面
+>>>
+
+
+##################################################
+# 错误处理
+##################################################
+<<<try-catch
+try {
+  // 可能出错的代码
+  throw new Error("something wrong");
+} catch (error) {
+  console.log(error.message);
+  console.log(error.stack);
+} finally {
+  // 总是执行
+}
+>>>
+
+<<<自定义错误
+class CustomError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "CustomError";
+  }
+}
+
+throw new CustomError("custom error");
+>>>
+
+<<<Promise错误处理
+promise
+  .then(result => {})
+  .catch(error => {})
+  .finally(() => {});
+
+async function example() {
+  try {
+    const result = await promise;
+  } catch (error) {
+    // 处理错误
+  }
+}
+>>>
