@@ -12,12 +12,6 @@ Lazy dev cheatsheet collection
 
 ## tool
 
-- bash
+- pip
 
 - powershell
-
-## lib
-
-- tkinter
-
-## framework
