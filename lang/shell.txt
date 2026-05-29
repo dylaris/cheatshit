@@ -1,0 +1,571 @@
+##################################################
+# 标题: Shell (ash/bash) Cheatsheet
+# 作者: dylaris
+# 日期: 2026-5-28
+# 目录:
+#      1.  参考
+#      2.  你好世界
+#      3.  基础类型
+#      4.  变量
+#      5.  运算符
+#      6.  流程控制
+#      7.  数组
+#      8.  字符串操作
+#      9.  函数
+#      10. 终端IO
+#      11. 重定向与管道
+#      12. 错误处理
+#      13. 常用命令
+##################################################
+
+##################################################
+# 参考
+##################################################
+https://www.gnu.org/software/bash/manual/           # Bash官方手册
+https://www.shellscript.sh/                         # Shell脚本教程
+https://mywiki.wooledge.org/BashGuide               # Bash指南
+
+##################################################
+# 你好世界
+##################################################
+<<<
+#!/bin/sh
+
+# 单行注释
+: '这是
+多行注释'
+
+echo "hello, world"
+>>>
+
+##################################################
+# 基础类型
+##################################################
+string                            # 字符串（唯一原生类型）
+integer                           # 整数（用于算术）
+array                             # 数组（bash支持）
+associative_array                 # 关联数组（bash 4+）
+
+<<<
+# 变量（无类型，默认为字符串）
+name="John"
+age=25
+pi=3.14
+
+# 只读变量
+readonly CONST_VALUE="readonly"
+
+# 导出为环境变量
+export PATH="/usr/local/bin:$PATH"
+>>>
+
+
+##################################################
+# 变量
+##################################################
+<<<变量定义与赋值
+# 定义变量（等号两边不能有空格）
+var="value"
+var2='single quotes'
+var3=$(command)                    # 命令替换
+var4=`command`                     # 旧式命令替换
+var5=$((1 + 2))                    # 算术结果
+>>>
+
+<<<变量引用
+echo $var
+echo ${var}
+echo "${var}"                      # 推荐：双引号保留空格
+echo '${var}'                      # 单引号内不展开变量
+>>>
+
+<<<特殊变量
+$0                                # 脚本名称
+$1 $2 ${10}                       # 位置参数（第1个，第2个，第10个）
+$#                                # 参数个数
+$@                                # 所有参数（作为独立参数）
+$*                                # 所有参数（作为单个字符串）
+$?                                # 上一条命令的退出状态
+$$                                # 当前shell进程ID
+$!                                # 最后一个后台进程ID
+$_                                # 上一条命令的最后一个参数
+>>>
+
+<<<变量操作
+${#var}                           # 字符串长度
+${var:-default}                   # 如果var未设置或空，使用默认值
+${var:=default}                   # 如果var未设置或空，赋值并返回
+${var:+value}                     # 如果var非空，返回值
+${var:?error}                     # 如果var未设置或空，显示错误并退出
+>>>
+
+
+##################################################
+# 运算符
+##################################################
+# 算术运算符
++ - * / %                         # 算术运算
+**                                # 幂运算（bash）
+++ --                             # 自增自减
+
+# 比较运算符（test命令或[]）
+-eq -ne -gt -lt -ge -le           # 整数比较（等于、不等、大于、小于、大于等于、小于等于）
+= !=                              # 字符串比较
+-z                                # 字符串是否为空
+-n                                # 字符串是否非空
+
+# 文件测试运算符
+-e file                           # 文件是否存在
+-f file                           # 是否为普通文件
+-d file                           # 是否为目录
+-r file                           # 是否可读
+-w file                           # 是否可写
+-x file                           # 是否可执行
+-s file                           # 是否非空
+-L file                           # 是否为符号链接
+file1 -nt file2                   # file1是否比file2新
+file1 -ot file2                   # file1是否比file2旧
+
+# 逻辑运算符
+&& || !                           # 逻辑与、或、非
+-a -o                             # test命令中的与、或
+
+# 位运算符（bash）
+& | ^ ~ << >>                     # 位与、或、异或、取反、左移、右移
+
+# 赋值运算符
+= += -= *= /= %=                  # 赋值运算符
+
+# 字符串运算符（用于[[]]）
+=~                                # 正则匹配
+
+# 其他运算符
+&                                 # 后台运行
+;                                 # 命令分隔符
+&&                                # 前一条成功才执行
+||                                # 前一条失败才执行
+|                                 # 管道
+> >> <                            # 重定向
+
+
+##################################################
+# 流程控制
+##################################################
+<<<if语句
+if [ condition ]; then
+    commands
+elif [ condition2 ]; then
+    commands
+else
+    commands
+fi
+>>>
+
+<<<case语句
+case "$var" in
+    pattern1)
+        commands
+        ;;
+    pattern2|pattern3)
+        commands
+        ;;
+    *)
+        commands
+        ;;
+esac
+>>>
+
+<<<for循环（带列表）
+for i in 1 2 3 4 5; do
+    echo $i
+done
+
+for i in {1..10}; do
+    echo $i
+done
+
+for file in *.txt; do
+    echo $file
+done
+>>>
+
+<<<for循环（C风格）
+for ((i=0; i<10; i++)); do
+    echo $i
+done
+>>>
+
+<<<while循环
+while [ $count -lt 10 ]; do
+    echo $count
+    count=$((count + 1))
+done
+>>>
+
+<<<until循环
+until [ $count -ge 10 ]; do
+    echo $count
+    count=$((count + 1))
+done
+>>>
+
+<<<循环控制
+break                             # 退出循环
+break 2                           # 退出两层循环
+continue                          # 跳过本次循环
+continue 2                        # 跳过当前和下一次迭代
+>>>
+
+<<<select循环
+select option in option1 option2 option3; do
+    echo "You selected: $option"
+    break
+done
+>>>
+
+
+##################################################
+# 数组（Bash支持）
+##################################################
+<<<创建
+arr=()                            # 空数组
+arr=(1 2 3 4 5)                   # 索引数组
+arr=("a" "b" "c")
+declare -a arr                    # 显式声明索引数组
+declare -A assoc                  # 关联数组（字典）
+assoc=([key1]="value1" [key2]="value2")
+>>>
+
+<<<增
+arr+=("new")                      # 添加元素
+arr[5]=6                          # 指定索引添加
+assoc["newkey"]="newvalue"        # 关联数组添加
+>>>
+
+<<<删
+unset arr[2]                      # 删除索引2的元素
+unset arr                         # 删除整个数组
+>>>
+
+<<<查
+echo ${arr[0]}                    # 第一个元素
+echo ${arr[-1]}                   # 最后一个元素
+echo ${#arr[@]}                   # 数组长度
+echo ${#arr}                      # 第一个元素的长度
+echo ${arr[@]}                    # 所有元素
+echo ${!arr[@]}                   # 所有索引（包括稀疏索引）
+echo ${assoc["key1"]}             # 关联数组取值
+>>>
+
+<<<切片
+slice=${arr[@]:1:3}               # 从索引1开始取3个
+>>>
+
+<<<遍历
+for item in "${arr[@]}"; do
+    echo $item
+done
+
+for i in "${!arr[@]}"; do
+    echo "$i: ${arr[$i]}"
+done
+
+for key in "${!assoc[@]}"; do
+    echo "$key: ${assoc[$key]}"
+done
+>>>
+
+
+##################################################
+# 字符串操作
+##################################################
+<<<创建
+str="hello"
+str='world'
+str="Hello $name"
+str="Hello ${name}"
+str=$(command)                    # 命令输出作为字符串
+>>>
+
+<<<拼接
+new="${str1}${str2}"
+new="$str1 $str2"
+new="prefix${var}suffix"
+>>>
+
+<<<长度
+len=${#str}
+>>>
+
+<<<子串提取
+sub=${str:2}                      # 从索引2到末尾
+sub=${str:2:5}                    # 从索引2提取5个字符
+sub=${str: -3}                    # 最后3个字符（注意空格）
+>>>
+
+<<<删除（模式匹配）
+# # 从前向后匹配，删除最短/最长匹配
+${str#pattern}                    # 删除最短前缀
+${str##pattern}                   # 删除最长前缀
+${str%pattern}                    # 删除最短后缀
+${str%%pattern}                   # 删除最长后缀
+
+# 示例
+file="path/to/file.txt"
+echo ${file#*/}                   # to/file.txt
+echo ${file##*/}                  # file.txt
+echo ${file%.*}                   # path/to/file
+echo ${file%%.*}                  # path/to/file
+>>>
+
+<<<查找替换
+${str/old/new}                    # 替换第一个匹配
+${str//old/new}                   # 替换所有匹配
+${str/#old/new}                   # 只在开头替换
+${str/%old/new}                   # 只在结尾替换
+>>>
+
+<<<大小写转换
+${str^}                           # 首字母大写
+${str^^}                          # 全部大写
+${str,}                           # 首字母小写
+${str,,}                          # 全部小写
+~                                 # 大小写转换（在[[]]中）
+>>>
+
+<<<分割
+IFS=',' read -ra arr <<< "$str"   # 按逗号分割为数组
+>>>
+
+
+##################################################
+# 函数
+##################################################
+<<<定义
+# 简单函数
+myfunc() {
+    echo "Hello $1"
+    return 0
+}
+
+# function关键字
+function myfunc {
+    local var="local scope"
+    echo "Hello"
+}
+
+# 带返回值的函数
+add() {
+    local sum=$(( $1 + $2 ))
+    echo $sum          # 通过标准输出返回
+    return 0           # 返回退出状态码
+}
+>>>
+
+<<<调用
+myfunc "John"
+result=$(add 2 3)                  # 捕获输出
+add 2 3                            # 直接调用
+>>>
+
+<<<参数
+$1 $2 ${10}                       # 位置参数
+$#                                # 参数个数
+$@                                # 所有参数
+$*                                # 所有参数（作为单个字符串）
+shift                             # 左移位置参数
+shift 2                           # 左移2位
+>>>
+
+<<<局部变量
+local var="value"                 # 声明局部变量
+local -r const="readonly"         # 局部只读变量
+local -a arr=()                   # 局部数组
+>>>
+
+<<<函数返回值
+return 0                          # 返回退出状态码（0-255）
+echo "result"                     # 通过输出返回值
+>>>
+
+
+##################################################
+# 终端IO
+##################################################
+<<<输出
+echo "text"                       # 输出并换行
+echo -n "text"                    # 不换行
+echo -e "line1\nline2"            # 解释转义字符
+printf "name: %s, age: %d\n" "$name" $age
+>>>
+
+<<<输入
+read var                          # 读取一行到变量
+read -p "Prompt: " var            # 带提示
+read -r var                       # 原始输入（不解释\转义）
+read -t 5 var                     # 5秒超时
+read -s var                       # 静默输入（不显示）
+read -a arr                       # 分割到数组
+IFS=',' read -r field1 field2 <<< "$line"  # 自定义分隔符
+>>>
+
+<<<重定向
+command > file                    # 标准输出重定向（覆盖）
+command >> file                   # 标准输出重定向（追加）
+command 2> file                   # 标准错误重定向
+command 2>&1                      # 合并标准错误到标准输出
+command &> file                   # 同时重定向标准输出和错误
+command < file                    # 标准输入重定向
+<<<EOF
+heredoc content
+EOF
+>>>
+
+<<<管道
+cmd1 | cmd2                       # 将cmd1的标准输出作为cmd2的标准输入
+cmd1 | tee file                   # 同时输出到文件和标准输出
+cmd1 | xargs cmd2                 # 将输出作为参数传递给cmd2
+>>>
+
+
+##################################################
+# 错误处理
+##################################################
+<<<退出状态
+command                           # 执行命令
+if [ $? -eq 0 ]; then
+    echo "Success"
+fi
+
+# 简写
+if command; then
+    echo "Success"
+fi
+>>>
+
+<<<条件执行
+command1 && command2              # command1成功才执行command2
+command1 || command2              # command1失败才执行command2
+command1; command2                # 顺序执行（无论成功与否）
+>>>
+
+<<<set选项
+set -e                            # 遇到错误立即退出
+set -u                            # 使用未定义变量时报错
+set -x                            # 打印执行的每条命令（调试）
+set -o pipefail                   # 管道中任一命令失败就失败
+set -o nounset                    # 同 set -u
+set -o errexit                    # 同 set -e
+
+# 组合使用
+set -euxo pipefail
+>>>
+
+<<<trap捕获信号
+trap 'echo "脚本退出"' EXIT        # 脚本退出时执行
+trap 'echo "收到INT信号"' INT      # Ctrl+C时执行
+trap 'cleanup; exit' TERM         # 终止信号
+trap - INT                        # 恢复默认处理
+>>>
+
+<<<test命令
+# [ ] 是 test 命令的别名
+[ "$a" = "$b" ]                   # 需要空格
+[ -f "$file" ]                    # 检查文件
+
+# [[ ]] 是改进版（bash）
+[[ $a == $b ]]                    # 不需要引号
+[[ $a =~ ^[0-9]+$ ]]              # 正则匹配
+[[ -f $file && -r $file ]]
+>>>
+
+<<<( ) 和 { }
+( command )                       # 子shell中执行
+{ command; }                      # 当前shell中执行（注意空格和分号）
+>>>
+
+<<<exit
+exit 0                            # 正常退出
+exit 1                            # 错误退出
+exit $?                           # 以上一个命令的退出状态退出
+>>>
+
+##################################################
+# 常用命令
+##################################################
+<<<文件操作
+ls -la                            # 列出文件
+cp src dest                       # 复制文件
+mv src dest                       # 移动/重命名
+rm file                           # 删除文件
+rm -r dir                         # 递归删除目录
+mkdir dir                         # 创建目录
+mkdir -p path/to/dir              # 创建父目录
+touch file                        # 创建空文件或更新时间戳
+>>>
+
+<<<文本处理
+cat file                          # 查看文件
+head -n 10 file                   # 前10行
+tail -n 10 file                   # 后10行
+tail -f file                      # 实时追踪文件变化
+grep pattern file                 # 搜索文本
+grep -r pattern dir/              # 递归搜索
+sed 's/old/new/g' file            # 流编辑
+awk '{print $1}' file             # 文本处理
+wc -l file                        # 统计行数
+wc -w file                        # 统计单词数
+sort file                         # 排序
+uniq                              # 去重
+cut -d',' -f1 file                # 剪切字段
+>>>
+
+<<<权限管理
+chmod +x script.sh                # 添加执行权限
+chmod 755 file                    # 设置权限
+chown user:group file             # 改变所有者
+>>>
+
+<<<进程管理
+ps aux                            # 查看进程
+kill PID                          # 终止进程
+kill -9 PID                       # 强制终止
+jobs                              # 查看后台任务
+bg                                # 将任务放到后台
+fg                                # 将任务放到前台
+&                                 # 在后台运行命令
+nohup command &                   # 后台运行并忽略挂断
+>>>
+
+<<<查找
+find /path -name "*.txt"          # 查找文件
+find . -type f -size +10M         # 大于10M的文件
+which command                     # 查找命令路径
+whereis command                   # 查找命令、源码、手册
+type command                      # 显示命令类型
+>>>
+
+<<<字符串处理
+echo "text" | tr 'a-z' 'A-Z'      # 大小写转换
+echo "text" | rev                 # 反转字符串
+echo "hello" | cut -c1-3          # 提取字符
+>>>
+
+<<<算术运算
+echo $((1 + 2))                   # 算术展开
+expr 1 + 2                        # 外部命令
+bc <<< "scale=2; 10/3"            # 浮点数计算
+>>>
+
+<<<时间
+date                              # 当前时间
+date +%Y-%m-%d                    # 格式化输出
+time command                      # 测量命令执行时间
+sleep 5                           # 延迟5秒
+>>>
+
+<<<网络
+curl http://example.com           # HTTP请求
+wget http://example.com/file      # 下载文件
+ping host                         # 测试连通性
+>>>

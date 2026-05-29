@@ -1,0 +1,608 @@
+##################################################
+# 标题: GDB Cheatsheet
+# 作者: dylaris
+# 日期: 2026-5-28
+# 目录:
+#      1.  参考
+#      2.  你好世界
+#      3.  启动与退出
+#      4.  基本命令
+#      5.  断点管理
+#      6.  程序执行
+#      7.  查看数据
+#      8.  栈帧操作
+#      9.  显示格式
+#      10. 修改变量
+#      11. 线程调试
+#      12. 进程调试
+#      13. 条件断点
+#      14. 观察点
+#      15. 捕获点
+#      16. 自定义命令
+#      17. 核心转储
+#      18. 远程调试
+#      19. TUI模式
+##################################################
+
+##################################################
+# 参考
+##################################################
+https://sourceware.org/gdb/current/onlinedocs/gdb/   # 官方文档
+https://beej.us/guide/bggdb/                         # Beej的GDB指南
+
+##################################################
+# 你好世界
+##################################################
+<<<
+# 编译时需要-g选项生成调试信息
+gcc -g -o hello hello.c
+
+# 启动GDB
+gdb hello
+
+# 常用启动参数
+gdb -q hello                     # 安静模式（不显示版权信息）
+gdb -c core.12345 hello          # 加载core dump文件
+gdb -p PID                       # 附加到运行中的进程
+gdb -x commands.gdb hello        # 执行命令文件
+>>>
+
+##################################################
+# 启动与退出
+##################################################
+gdb PROGRAM                      # 启动GDB并加载程序
+gdb PROGRAM corefile             # 调试core dump
+gdb PROGRAM PID                  # 附加到进程
+
+(gdb) file PROGRAM               # 加载程序符号
+(gdb) attach PID                 # 附加到运行进程
+(gdb) detach                     # 分离进程
+(gdb) kill                       # 终止调试的进程
+(gdb) quit                       # 退出GDB
+(gdb) q                          # 简写
+
+##################################################
+# 基本命令
+##################################################
+(gdb) help                       # 帮助
+(gdb) help COMMAND               # 查看命令帮助
+(gdb) shell CMD                  # 执行shell命令
+(gdb) show                      # 显示GDB设置
+(gdb) set                      # 设置GDB选项
+(gdb) set pagination off        # 关闭分页
+(gdb) set logging on            # 开启日志记录
+(gdb) set logging file gdb.log  # 设置日志文件
+
+##################################################
+# 断点管理
+##################################################
+<<<设置断点
+(gdb) break FUNCTION            # 函数入口断点
+(gdb) break LINENO               # 行号断点
+(gdb) break FILENAME:LINENO     # 文件指定行
+(gdb) break FILENAME:FUNCTION   # 文件指定函数
+(gdb) break *ADDRESS            # 地址断点
+(gdb) b                          # break的简写
+
+(gdb) tbreak                    # 临时断点（触发一次后删除）
+(gdb) hbreak                    # 硬件断点
+(gdb) rbreak REGEX              # 正则匹配函数设断点
+(gdb) rbreak .*                 # 所有函数设断点
+>>>
+
+<<<查看断点
+(gdb) info breakpoints          # 列出所有断点
+(gdb) info break                # 简写
+(gdb) i b                        # 更简写
+>>>
+
+<<<删除断点
+(gdb) delete                    # 删除所有断点
+(gdb) delete NUM                # 删除指定编号断点
+(gdb) clear                     # 删除当前位置断点
+(gdb) clear FUNCTION            # 删除函数断点
+>>>
+
+<<<启用/禁用断点
+(gdb) enable NUM                # 启用断点
+(gdb) disable NUM               # 禁用断点
+(gdb) enable once NUM           # 启用一次后自动禁用
+(gdb) enable delete NUM         # 启用一次后删除
+>>>
+
+<<<跳过断点
+(gdb) ignore NUM COUNT          # 忽略N次后才停
+(gdb) skip                      # 跳过当前栈帧
+(gdb) skip function FUNCTION    # 跳过指定函数
+(gdb) info skip                 # 查看跳过的位置
+>>>
+
+##################################################
+# 程序执行
+##################################################
+(gdb) run                       # 运行程序
+(gdb) r                         # 简写
+(gdb) run ARG1 ARG2             # 带参数运行
+(gdb) set args ARG1 ARG2        # 设置命令行参数
+(gdb) show args                 # 显示参数
+
+(gdb) continue                  # 继续执行
+(gdb) c                         # 简写
+(gdb) step                      # 单步进入（step into）
+(gdb) s                         # 简写
+(gdb) step COUNT                # 步进N次
+(gdb) next                      # 单步跳过（step over）
+(gdb) n                         # 简写
+(gdb) finish                    # 执行完当前函数并返回
+(gdb) fin                       # 简写
+(gdb) until                     # 执行到下一行/跳出循环
+(gdb) u                         # 简写
+(gdb) until LINENO              # 执行到指定行
+(gdb) advance LOC               # 前进到指定位置
+
+(gdb) signal SIG                # 发送信号
+(gdb) kill                      # 终止程序
+(gdb) stepi                     # 单步一条机器指令
+(gdb) nexti                     # 单步跳过机器指令
+
+##################################################
+# 查看数据
+##################################################
+<<<打印变量
+(gdb) print VAR                 # 打印变量值
+(gdb) p VAR                     # 简写
+(gdb) p /FMT VAR                # 指定格式打印
+(gdb) print *PTR@LEN            # 打印数组元素
+(gdb) print (TYPE)ADDR          # 地址转类型打印
+>>>
+
+<<<打印类型信息
+(gdb) ptype VAR                 # 打印变量类型
+(gdb) ptype STRUCT              # 打印结构体定义
+(gdb) whatis VAR                # 打印变量简要类型
+>>>
+
+<<<自动显示
+(gdb) display VAR               # 每次停止时显示
+(gdb) display/FMT VAR           # 带格式显示
+(gdb) info display              # 查看自动显示列表
+(gdb) undisplay NUM             # 删除自动显示
+(gdb) delete display NUM        # 同上
+(gdb) disable display NUM       # 禁用自动显示
+(gdb) enable display NUM        # 启用自动显示
+>>>
+
+<<<查看内存
+(gdb) x /NFU ADDRESS            # 查看内存内容
+# N: 重复次数
+# F: 格式 (x十六进制, d十进制, u无符号, i指令, s字符串, c字符)
+# U: 单元大小 (b字节, h半字, w字, g双字)
+
+(gdb) x/10xw 0x7fffffffda40     # 打印10个字（十六进制）
+(gdb) x/20i $pc                 # 打印20条指令
+(gdb) x/s 0x400500              # 打印字符串
+(gdb) x/10c buffer              # 打印10个字符
+>>>
+
+<<<查看寄存器
+(gdb) info registers            # 查看所有寄存器
+(gdb) info reg                  # 简写
+(gdb) info reg RAX              # 查看单个寄存器
+(gdb) p $rax                    # 打印寄存器值
+(gdb) p $rip                    # 指令指针
+(gdb) p $rsp                    # 栈指针
+>>>
+
+##################################################
+# 栈帧操作
+##################################################
+(gdb) backtrace                 # 查看调用栈
+(gdb) bt                        # 简写
+(gdb) bt full                   # 带局部变量的栈
+(gdb) bt N                      # 查看外层N帧
+(gdb) where                     # 同backtrace
+
+(gdb) frame                     # 查看当前帧信息
+(gdb) frame NUM                 # 切换到指定帧
+(gdb) f NUM                     # 简写
+(gdb) up                        # 向上移动一帧
+(gdb) down                      # 向下移动一帧
+
+(gdb) info frame                # 详细当前帧信息
+(gdb) info args                 # 当前帧函数参数
+(gdb) info locals               # 当前帧局部变量
+(gdb) info catch                # 当前帧异常捕获信息
+
+(gdb) select-frame NUM          # 选择帧但不显示
+(gdb) return                    # 从当前函数返回
+(gdb) return EXPR               # 返回指定值
+
+##################################################
+# 显示格式
+##################################################
+<<<常用格式后缀
+(gdb) p/x VAR                   # 十六进制
+(gdb) p/d VAR                   # 有符号十进制
+(gdb) p/u VAR                   # 无符号十进制
+(gdb) p/o VAR                   # 八进制
+(gdb) p/t VAR                   # 二进制
+(gdb) p/c VAR                   # 字符
+(gdb) p/f VAR                   # 浮点数
+(gdb) p/s VAR                   # 字符串
+(gdb) p/a VAR                   # 地址
+(gdb) p/r VAR                   # 原始格式
+>>>
+
+<<<设置默认格式
+(gdb) set print address on      # 打印地址
+(gdb) set print array on        # 打印数组
+(gdb) set print demangle on     # 解码C++名称
+(gdb) set print elements 200    # 数组元素限制
+(gdb) set print null-stop on    # 字符串遇0停止
+(gdb) set print object on       # 显示C++对象实际类型
+(gdb) set print static-members on # 打印静态成员
+(gdb) set print vtbl on         # 打印虚表
+(gdb) set print pretty on       # 美观打印结构体
+>>>
+
+##################################################
+# 修改变量
+##################################################
+(gdb) set VAR = VALUE           # 修改变量值
+(gdb) set {TYPE}ADDR = VALUE    # 修改内存
+(gdb) set variable VAR = VALUE  # 同set
+
+(gdb) print VAR = VALUE         # 赋值并打印
+(gdb) call FUNC(ARGS)           # 调用函数
+(gdb) call (void) FUNC(ARGS)    # 调用不打印返回值
+
+(gdb) jump LINENO               # 跳转执行
+(gdb) jump *ADDRESS             # 跳转到地址
+(gdb) signal SIG                # 发送信号
+
+##################################################
+# 线程调试
+##################################################
+(gdb) info threads              # 查看所有线程
+(gdb) thread THREAD_ID          # 切换线程
+(gdb) thread apply IDS CMD      # 对线程执行命令
+(gdb) thread apply all bt       # 所有线程调用栈
+(gdb) thread apply all bt full  # 所有线程详细栈
+
+(gdb) break LINENO thread THREAD_ID  # 指定线程断点
+(gdb) set scheduler-locking on      # 只有当前线程运行
+(gdb) set scheduler-locking off     # 所有线程运行
+(gdb) set scheduler-locking step    # 单步时只锁当前线程
+
+(gdb) thread name NAME          # 设置线程名
+
+##################################################
+# 进程调试
+##################################################
+<<<进程附件与分离
+(gdb) attach PID                # 附加到运行进程
+(gdb) detach                    # 分离进程（进程继续运行）
+(gdb) detach PID                # 分离指定进程
+
+# 启动时直接附加
+$ gdb -p PID
+$ gdb program PID               # 加载符号并附加
+
+# 查看进程
+(gdb) info inferiors            # 查看所有调试的进程
+(gdb) inferior NUM              # 切换到指定进程
+>>>
+
+<<<多进程调试（fork/vfork）
+# 调试模式设置
+(gdb) set follow-fork-mode parent   # 跟踪父进程（默认）
+(gdb) set follow-fork-mode child    # 跟踪子进程
+(gdb) set detach-on-fork on         # fork后分离另一进程（默认）
+(gdb) set detach-on-fork off        # fork后保留另一进程
+
+# 查看设置
+(gdb) show follow-fork-mode
+(gdb) show detach-on-fork
+
+# 多进程管理
+(gdb) info forks                # 查看fork的子进程
+(gdb) fork NUM                  # 切换到指定fork的进程
+(gdb) process NUM               # 切换到指定进程
+
+# fork时自动断点
+(gdb) catch fork                # fork时停止
+(gdb) catch vfork               # vfork时停止
+(gdb) catch exec                # exec时停止
+>>>
+
+<<<多进程同时调试
+# 保留所有子进程
+(gdb) set detach-on-fork off
+(gdb) set follow-fork-mode child   # 可选
+
+# 查看所有进程
+(gdb) info inferiors
+#   Num  Description       Executable
+#   * 1  process 12345     /home/user/program
+#     2  process 12346     /home/user/program
+#     3  process 12347     /home/user/program
+
+# 进程间切换
+(gdb) inferior 2              # 切换到子进程
+(gdb) inferior 1              # 切回父进程
+
+# 进程操作
+(gdb) kill inferior 2         # 杀死进程2
+(gdb) remove-inferiors 3      # 移除进程3（需先kill）
+(gdb) add-inferior            # 添加新进程
+(gdb) add-inferior -exec program  # 添加带程序的进程
+>>>
+
+<<<进程间通信调试
+# 跟踪所有进程（设置断点后所有进程都会停）
+(gdb) break main
+(gdb) set detach-on-fork off
+(gdb) run
+# 所有子进程都会停在main断点
+
+# 查看多进程调用栈
+(gdb) inferior 1
+(gdb) bt
+(gdb) inferior 2
+(gdb) bt
+
+# 对所有进程执行命令
+(gdb) inferior 1
+(gdb) thread apply all bt     # 当前进程所有线程
+(gdb) inferior 2
+(gdb) thread apply all bt
+
+# 使用全局命令
+(gdb) define all-inferiors
+> set $i = 1
+> while $i <= [info inferiors]
+>   inferior $i
+>   bt
+>   set $i = $i + 1
+> end
+> end
+>>>
+
+<<<进程信号与状态
+(gdb) info signals             # 查看信号处理
+(gdb) handle SIGCHLD pass      # 让子进程信号通过
+(gdb) handle SIGCHLD nostop    # 收到SIGCHLD不停止
+
+# 进程退出处理
+(gdb) set follow-exec-mode new    # exec后创建新inferior
+(gdb) set follow-exec-mode same   # exec后复用当前inferior
+
+# 打印进程信息
+(gdb) info proc                  # 当前进程信息
+(gdb) info proc mappings         # 内存映射
+(gdb) info proc stat             # 进程状态
+(gdb) info proc all              # 所有进程信息
+
+# 系统调用追踪
+(gdb) catch syscall              # 捕获所有系统调用
+(gdb) catch syscall open read write  # 捕获特定调用
+(gdb) info catch                 # 查看捕获点
+>>>
+
+<<<进程调试示例
+# 示例1：调试fork子进程
+(gdb) catch fork
+(gdb) run
+# ... 停止在fork处
+(gdb) info forks                # 查看fork的子进程
+(gdb) fork 2                    # 切换到子进程
+(gdb) continue                  # 调试子进程
+(gdb) detach                    # 分离子进程
+
+# 示例2：同时调试父子进程
+(gdb) set detach-on-fork off
+(gdb) break main
+(gdb) run
+(gdb) info inferiors            # 看到父子进程都在
+(gdb) inferior 1                # 父进程
+(gdb) break child_function
+(gdb) inferior 2                # 子进程
+(gdb) break child_function
+(gdb) continue                  # 两个进程都会停在断点
+
+# 示例3：调试daemon进程
+$ gdb daemon_program
+(gdb) catch fork
+(gdb) run
+(gdb) continue                  # 触发fork
+(gdb) info inferiors            # 找到daemon子进程
+(gdb) inferior 2                # 切换到daemon
+(gdb) detach inferior 1         # 分离父进程
+(gdb) continue                  # 继续调试daemon
+>>>
+
+##################################################
+# 条件断点
+##################################################
+(gdb) break LINENO if COND      # 条件断点
+(gdb) break FUNCTION if COND
+(gdb) condition NUM COND        # 给现有断点加条件
+(gdb) condition NUM             # 删除断点条件
+
+(gdb) break LINENO if i == 100
+(gdb) break main if argc > 1
+(gdb) condition 2 i == 0
+
+##################################################
+# 观察点
+##################################################
+(gdb) watch VAR                 # 写观察点（变量改变时触发）
+(gdb) watch *(TYPE*)ADDR        # 内存地址观察点
+(gdb) rwatch VAR                # 读观察点
+(gdb) awatch VAR                # 读写观察点
+(gdb) info watchpoints          # 查看观察点
+
+(gdb) watch -l VAR              # 使用位置表达式
+(gdb) set can-use-hw-watchpoints 1  # 使用硬件观察点
+
+##################################################
+# 捕获点
+##################################################
+(gdb) catch catch               # C++ catch块
+(gdb) catch throw               # C++ throw
+(gdb) catch syscall             # 系统调用
+(gdb) catch syscall open        # 特定系统调用
+(gdb) catch fork                # fork事件
+(gdb) catch vfork               # vfork事件
+(gdb) catch exec                # exec事件
+(gdb) catch load LIBNAME        # 加载共享库
+(gdb) catch unload LIBNAME      # 卸载共享库
+
+(gdb) info catch                # 查看捕获点
+
+##################################################
+# 自定义命令
+##################################################
+<<<定义用户命令
+(gdb) define COMMAND
+> 命令1
+> 命令2
+> end
+
+(gdb) define print_array
+> set $i = 0
+> while $i < $arg0
+>   printf "%d ", *($arg1 + $i)
+>   set $i = $i + 1
+> end
+> end
+>>>
+
+<<<钩子函数
+(gdb) hook-stop                 # 每次停止时执行
+> bt
+> end
+
+(gdb) hook-COMMAND              # 命令执行前钩子
+>>>
+
+<<<命令文件
+(gdb) source FILE               # 执行命令文件
+# 例如 commands.gdb:
+# break main
+# run
+# bt
+# quit
+
+$ gdb -x commands.gdb hello
+>>>
+
+##################################################
+# 核心转储
+##################################################
+(gdb) generate-core-file        # 生成core dump
+(gdb) gcore                     # 同上
+(gdb) gcore FILENAME            # 指定文件名
+
+# 系统设置启用core dump
+$ ulimit -c unlimited           # 设置core文件大小无限制
+$ echo "core.%e.%p" > /proc/sys/kernel/core_pattern  # 命名格式
+
+(gdb) core-file corefile        # 加载core dump分析
+
+##################################################
+# 远程调试
+##################################################
+<<<目标端（gdbserver）
+$ gdbserver :1234 ./program
+$ gdbserver :1234 ./program ARGS
+$ gdbserver /dev/ttyS0 ./program  # 串口
+>>>
+
+<<<主机端（gdb）
+(gdb) target remote HOST:PORT   # 连接gdbserver
+(gdb) target remote :1234
+(gdb) target remote /dev/ttyS0
+
+(gdb) target extended-remote :1234  # 扩展远程（支持run）
+(gdb) remote put FILE LOCAL REMOTE   # 上传文件
+
+(gdb) set remote exec-file FILE      # 设置远程执行文件
+(gdb) set sysroot PATH               # 设置sysroot（交叉编译）
+>>>
+
+##################################################
+# TUI模式
+##################################################
+<<<启用TUI
+(gdb) tui enable                # 启用文本界面
+(gdb) layout src                # 源码布局
+(gdb) layout asm                # 汇编布局
+(gdb) layout split              # 源码+汇编
+(gdb) layout regs               # 寄存器布局
+(gdb) layout next               # 下一布局
+(gdb) layout prev               # 上一布局
+
+Ctrl+L                         # 刷新屏幕
+Ctrl+X A                       # 退出/进入TUI
+Ctrl+X 1                       # 单窗口
+Ctrl+X 2                       # 双窗口
+>>>
+
+<<<TUI快捷键
+上下键                         # 滚动源码
+PgUp/PgDn                      # 翻页
+Ctrl+P / Ctrl+N                # 上/下历史命令
+Ctrl+X S                       # 切换SingleKey模式
+>>>
+
+##################################################
+# 常用调试场景
+##################################################
+<<<段错误调试
+(gdb) run
+(gdb) bt                       # 崩溃时查看调用栈
+(gdb) frame 0                  # 到崩溃帧
+(gdb) print *ptr               # 检查空指针
+(gdb) x/10x $rsp               # 查看栈内容
+>>>
+
+<<<死锁调试
+(gdb) thread apply all bt      # 所有线程栈
+(gdb) thread apply all bt full
+>>>
+
+<<<内存泄漏
+(gdb) watch malloc             # 监控内存分配
+(gdb) catch syscall brk        # 监控堆扩展
+>>>
+
+<<<动态库调试
+(gdb) info sharedlibrary       # 查看加载的库
+(gdb) set stop-on-solib-events 1  # 库加载时停止
+>>>
+
+<<<信号处理
+(gdb) info signals             # 查看信号处理
+(gdb) handle SIGINT nostop pass print  # 不停止但打印
+(gdb) handle SIGUSR1 stop print        # 停止并打印
+>>>
+
+##################################################
+# 快捷技巧
+##################################################
+(gdb) RET                       # 重复上次命令
+(gdb) [TAB]                     # 命令补全
+
+# 常用别名定义
+(gdb) alias btfull = bt full
+(gdb) alias p* = print *
+
+# 历史命令
+(gdb) show commands            # 显示历史
+(gdb) !NUM                     # 执行历史第N条
+(gdb) !!                       # 执行上一条
+
+# 初始化文件
+~/.gdbinit                     # 用户初始化脚本
+./.gdbinit                     # 项目初始化脚本

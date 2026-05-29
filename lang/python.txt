@@ -1,0 +1,524 @@
+##################################################
+# 标题: Python Cheatsheet
+# 作者: dylaris
+# 日期: 2026-5-24
+# 目录:
+#      1.  参考
+#      2.  你好世界
+#      3.  基础类型
+#      4.  复合类型
+#      5.  运算符
+#      6.  流程控制
+#      7.  列表
+#      8.  元组
+#      9.  字典
+#      10. 集合
+#      11. 字符串
+#      12. 函数
+#      13. 终端IO
+#      14. 错误处理
+##################################################
+
+##################################################
+# 参考
+##################################################
+https://docs.python.org/zh-cn/3/                # 官方文档
+https://learnxinyminutes.com/docs/python/       # 快速上手
+
+##################################################
+# 你好世界
+##################################################
+<<<
+# 单行注释
+""" 多行
+   注释 """
+
+print("hello, world")
+>>>
+
+##################################################
+# 运算符
+##################################################
++ - * / %                         # 算术运算符
+**                                # 幂运算
+//                                # 整除
+& | ^ ~ << >>                     # 位运算符
+and or not                        # 逻辑运算符
+== != < <= > >=                   # 比较运算符
+is is not                         # 身份运算符
+in not in                         # 成员运算符
+= += -= *= /= %= **= //= &= |= ^= # 赋值运算符
+:=                                # 海象运算符（赋值表达式）
+...                               # Ellipsis 对象
+
+##################################################
+# 基础类型
+##################################################
+int                               # 整数
+float                             # 浮点数
+complex                           # 复数
+str                               # 字符串
+bool                              # 布尔
+None                              # 空类型
+bytes                             # 字节串
+
+<<<
+a = True
+b = False
+
+a = 42
+b = 3.14
+c = 1.23e+5
+d = 0x1A3F
+e = 0b1010
+f = 0o755
+
+a = "hello"
+b = 'world'
+c = """多行
+字符串"""
+d = f"hello {name}"             # f-string
+e = r"raw\nstring"              # 原始字符串
+
+a = None
+
+a = 3+4j                        # 复数
+a = b"hello"                    # 字节串
+>>>
+
+
+##################################################
+# 复合类型
+##################################################
+class                             # 类
+object                            # 对象
+
+<<<
+# 类定义
+class Foo:
+    # 类属性
+    class_attr = 10
+
+    # 构造函数
+    def __init__(self, param1, param2):
+        self.public = param1      # 公有属性
+        self._protected = param2  # 保护属性
+        self.__private = param2   # 私有属性（名称修饰）
+
+    # property（getter/setter）
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
+
+    # 实例方法
+    def method(self, param1, param2):
+        return param1 + param2
+
+    # 类方法
+    @classmethod
+    def class_method(cls, param):
+        return param
+
+    # 静态方法
+    @staticmethod
+    def static_method(param):
+        return param
+
+    # 私有方法
+    def __private_method(self):
+        return "private"
+
+# 对象字面量（使用字典或 SimpleNamespace）
+from types import SimpleNamespace
+obj = SimpleNamespace(prop="value")
+
+# 实例化
+a = Foo(param1, param2)
+>>>
+
+
+##################################################
+# 流程控制
+##################################################
+<<<分支判断
+if n < 50:
+    pass
+elif n < 70:
+    pass
+else:
+    pass
+>>>
+
+<<<循环结构
+while n < 100:
+    n += 1
+
+for i in range(100):
+    pass
+
+for i in range(1, 101):
+    pass
+
+for item in iterable:
+    pass
+
+for key in dict:
+    pass
+
+for index, item in enumerate(list):
+    pass
+
+# 列表推导式
+squares = [x**2 for x in range(10)]
+>>>
+
+break                 # 跳出循环
+continue              # 跳过本次循环
+return VALUE          # 跳出函数
+raise error           # 抛出异常
+pass                  # 空语句
+
+
+##################################################
+# 列表（可变序列）
+##################################################
+<<<创建
+lst = []
+lst = [1, 2, 3, 4]
+lst = list("hello")          # ['h','e','l','l','o']
+lst = [x*2 for x in range(5)]
+>>>
+
+<<<增
+lst.append(10)               # 末尾添加
+lst.insert(2, "insert")      # 指定位置插入
+lst.extend(["a", "b"])       # 合并列表
+lst += ["c", "d"]            # 合并列表
+>>>
+
+<<<删
+lst.pop()                    # 删除末尾并返回
+lst.pop(2)                   # 删除索引2并返回
+lst.remove("value")          # 删除第一个匹配项
+del lst[2]                   # 删除索引2
+del lst[2:5]                 # 删除切片
+lst.clear()                  # 清空列表
+>>>
+
+<<<查
+length = len(lst)
+element = lst[2]
+element = lst[-1]            # 最后一个
+index = lst.index("value")
+count = lst.count("value")
+exists = "value" in lst
+slice = lst[1:4]             # 索引1到3
+slice = lst[::2]             # 步长2
+>>>
+
+<<<改
+lst[0] = "first"
+lst[1:3] = ["a", "b"]        # 切片赋值
+lst.reverse()                # 反转
+lst.sort()                   # 排序
+lst.sort(reverse=True)       # 降序
+sorted(lst)                  # 返回新列表
+>>>
+
+<<<遍历
+for item in lst:
+    pass
+
+for i, item in enumerate(lst):
+    pass
+
+for i in range(len(lst)):
+    pass
+>>>
+
+
+##################################################
+# 元组（不可变序列）
+##################################################
+<<<创建
+tup = ()
+tup = (1, 2, 3)
+tup = 1, 2, 3                # 元组打包
+single = (1,)                # 单元素元组
+tup = tuple([1, 2, 3])
+>>>
+
+<<<查
+length = len(tup)
+element = tup[2]
+index = tup.index("value")
+count = tup.count("value")
+exists = "value" in tup
+slice = tup[1:4]
+>>>
+
+<<<解包
+a, b, c = tup
+a, *rest = tup
+>>>
+
+
+##################################################
+# 字典（键值对）
+##################################################
+<<<创建
+d = {}
+d = {"key": "value"}
+d = dict(key="value")
+d = dict([("a", 1), ("b", 2)])
+d = {x: x**2 for x in range(5)}
+>>>
+
+<<<增
+d["key"] = "value"
+d.update({"a": 1, "b": 2})
+>>>
+
+<<<删
+del d["key"]
+d.pop("key")                 # 删除并返回值
+d.popitem()                  # 删除并返回最后一项
+d.clear()                    # 清空
+>>>
+
+<<<查
+value = d["key"]             # 不存在时抛出KeyError
+value = d.get("key")         # 不存在返回None
+value = d.get("key", "default")
+exists = "key" in d
+length = len(d)
+keys = d.keys()
+values = d.values()
+items = d.items()
+>>>
+
+<<<改
+d["key"] = "new value"
+d.update({"key": "new"})
+>>>
+
+<<<遍历
+for key in d:
+    pass
+
+for key, value in d.items():
+    pass
+
+for value in d.values():
+    pass
+>>>
+
+
+##################################################
+# 集合（无序不重复）
+##################################################
+<<<创建
+s = set()
+s = {1, 2, 3}
+s = set([1, 2, 2, 3])       # {1, 2, 3}
+s = {x for x in range(5)}
+>>>
+
+<<<增
+s.add(4)
+s.update([5, 6, 7])
+>>>
+
+<<<删
+s.remove(4)                  # 不存在时KeyError
+s.discard(4)                 # 不存在时不报错
+s.pop()                      # 删除并返回任意元素
+s.clear()
+>>>
+
+<<<查
+exists = 3 in s
+length = len(s)
+>>>
+
+<<<集合运算
+union = s1 | s2              # 并集
+inter = s1 & s2              # 交集
+diff = s1 - s2               # 差集
+symdiff = s1 ^ s2            # 对称差
+>>>
+
+
+##################################################
+# 字符串
+##################################################
+<<<创建
+s = "hello"
+s = 'world'
+s = f"hello {name}"
+s = r"raw\nstring"
+s = str(123)
+>>>
+
+<<<增/拼接
+new = s + "world"
+new = "".join(["a", "b", "c"])
+new = f"prefix {s} suffix"
+>>>
+
+<<<删/修剪
+new = s.replace(" ", "")         # 删除空格
+new = s.strip()                  # 删除两端空白
+new = s.lstrip()                 # 删除开头空白
+new = s.rstrip()                 # 删除结尾空白
+>>>
+
+<<<查
+char = s[2]
+char = s[-1]                     # 最后一个
+substr = s[1:4]
+length = len(s)
+index = s.find("a")              # 不存在返回-1
+index = s.index("a")             # 不存在ValueError
+count = s.count("a")
+exists = "abc" in s
+starts = s.startswith("prefix")
+ends = s.endswith("suffix")
+>>>
+
+<<<改
+upper = s.upper()
+lower = s.lower()
+cap = s.capitalize()
+title = s.title()
+swapped = s.swapcase()
+replaced = s.replace("a", "b")
+parts = s.split(",")             # 分割成列表
+joined = ",".join(parts)         # 拼接
+padded = s.zfill(10)             # 左侧补零
+padded = s.rjust(10, "0")
+padded = s.ljust(10, " ")
+>>>
+
+<<<遍历
+for ch in s:
+    pass
+
+for i, ch in enumerate(s):
+    pass
+>>>
+
+
+##################################################
+# 函数
+##################################################
+<<<定义
+def add(a, b):
+    return a + b
+
+# 默认参数
+def greet(name="world"):
+    return f"hello {name}"
+
+# 关键字参数
+def func(a, b, c=0, *args, **kwargs):
+    pass
+
+# 返回值类型注解
+def add(a: int, b: int) -> int:
+    return a + b
+
+# 匿名函数（lambda）
+add = lambda a, b: a + b
+
+# 装饰器
+def logger(func):
+    def wrapper(*args, **kwargs):
+        print(f"calling {func.__name__}")
+        return func(*args, **kwargs)
+    return wrapper
+
+@logger
+def say_hello():
+    print("hello")
+>>>
+
+<<<调用
+add(2, 3)
+add(a=2, b=3)
+func(1, 2, 3, 4, 5, x=10, y=20)
+>>>
+
+<<<闭包
+def counter():
+    count = 0
+    def inner():
+        nonlocal count
+        count += 1
+        return count
+    return inner
+>>>
+
+
+##################################################
+# 终端IO
+##################################################
+<<<标准输入输出
+print("hello, world")            # 自动换行
+print("a", "b", sep=",", end="!")
+name = input("请输入：")          # 读取字符串
+>>>
+
+<<<格式化输出
+print(f"name: {name}, age: {age}")
+print("name: {}, age: {}".format(name, age))
+print("name: %s, age: %d" % (name, age))
+>>>
+
+<<<调试输出
+import pprint
+pprint.pprint(obj)               # 美化打印
+>>>
+
+
+##################################################
+# 错误处理
+##################################################
+<<<try-except
+try:
+    # 可能出错的代码
+    raise ValueError("something wrong")
+except ValueError as e:
+    print(e)
+except (TypeError, ZeroDivisionError):
+    pass
+except Exception as e:
+    print(f"unexpected: {e}")
+else:
+    # 没有异常时执行
+    pass
+finally:
+    # 总是执行
+    pass
+>>>
+
+<<<自定义异常
+class CustomError(Exception):
+    pass
+
+raise CustomError("custom error")
+>>>
+
+<<<断言
+assert condition, "error message"
+>>>
+
+<<<with语句（上下文管理）
+with open("file.txt", "r") as f:
+    content = f.read()
+# 自动关闭文件
+>>>
